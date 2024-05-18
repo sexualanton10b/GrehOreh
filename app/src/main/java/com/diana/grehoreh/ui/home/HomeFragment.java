@@ -9,8 +9,12 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.diana.grehoreh.R;
 import com.diana.grehoreh.databinding.FragmentHomeBinding;
+import com.diana.grehoreh.ui.Presenter.ReadProducts;
 
 public class HomeFragment extends Fragment {
 
@@ -24,8 +28,13 @@ public class HomeFragment extends Fragment {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        final TextView textView = binding.textHome;
-        homeViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+        // Находим RecyclerView в макете и настраиваем его
+        RecyclerView recyclerView = root.findViewById(R.id.list);
+        recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+
+        // Создаем адаптер, используя метод CreateAdapter из класса ReadProducts
+        // и устанавливаем его для RecyclerView
+        recyclerView.setAdapter(ReadProducts.CreateAdapter(requireContext()));
         return root;
     }
 

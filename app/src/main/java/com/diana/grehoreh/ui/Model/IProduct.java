@@ -5,4 +5,5 @@ public interface IProduct {
     String getCategory();
     String getCountry();
     int getPrice();
+    int getPictureResource();
 }

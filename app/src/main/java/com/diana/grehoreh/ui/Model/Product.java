@@ -1,15 +1,19 @@
 package com.diana.grehoreh.ui.Model;
 
-public class Product implements IProduct{
+import java.io.Serializable;
+
+public class Product implements IProduct, Serializable {
     private String name;
     private String category;
     private String country;
     private int price;
-    public Product(String name, String category, String country, int price){
+    private int pictureResource;
+    public Product(String name, String category, String country, int price, int pictureResource){
         this.name=name;
         this.category=category;
         this.country=country;
         this.price=price;
+        this.pictureResource=pictureResource;
     }
     @Override
     public String getName(){
@@ -28,5 +32,9 @@ public class Product implements IProduct{
     @Override
     public int getPrice() {
         return price;
+    }
+    @Override
+    public int getPictureResource(){
+        return pictureResource;
     }
 }

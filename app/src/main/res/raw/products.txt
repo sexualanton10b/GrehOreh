@@ -1,0 +1,10 @@
+Яблоко;Фрукт;Россия;100;R.drawable.apple
+Банан;Фрукт;Эквадор;80;R.drawable.banana
+Морковь;Овощ;Россия;50;R.drawable.carrot
+Картофель;Овощ;Россия;30;R.drawable.potato
+Авокадо;Фрукт;Мексика;150;R.drawable.avocado
+Помидор;Овощ;Турция;70;R.drawable.tomato
+Грецкий орех;Орех;США;600;R.drawable.ore0h
+Киви;Фрукт;Новая Зеландия;120;R.drawable.kiwi
+Брокколи;Овощ;Италия;200;R.drawable.brokkoli
+Манго;Фрукт;Индия;130;R.drawable.mango
