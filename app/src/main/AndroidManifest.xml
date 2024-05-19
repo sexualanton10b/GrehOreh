@@ -23,9 +23,8 @@
             </intent-filter>
         </activity>
 
-        <!-- Add the AddActivity here -->
         <activity android:name=".AddActivity" />
-
+        <activity android:name=".EditActivity" />
     </application>
 
 </manifest>

@@ -7,6 +7,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.diana.grehoreh.ui.Model.Product;
+import com.diana.grehoreh.ui.Model.Purchase;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MyDataBaseHelper extends SQLiteOpenHelper {
     // Имя базы данных
@@ -17,6 +21,7 @@ public class MyDataBaseHelper extends SQLiteOpenHelper {
     // Таблица my_basket
     public static final String TABLE_MY_BASKET = "my_basket";
     public static final String COLUMN_PRODUCT_NAME = "product_name";
+    public static final String COLUMN_PRODUCT_CATEGORY = "product_category";
     public static final String COLUMN_PRODUCT_PRICE = "product_price";
     public static final String COLUMN_PRODUCT_WEIGHT = "product_weight";
     public static final String COLUMN_PRODUCT_SELL = "product_sell";
@@ -32,6 +37,7 @@ public class MyDataBaseHelper extends SQLiteOpenHelper {
     // Таблица my_purchases
     public static final String TABLE_MY_PURCHASES = "my_purchases";
     public static final String COLUMN_PURCHASE_NAME = "purchase_name";
+    public static final String COLUMN_PURCHASE_CATEGORY = "purchase_category";
     public static final String COLUMN_PURCHASE_PRICE = "purchase_price";
     public static final String COLUMN_PURCHASE_WEIGHT = "purchase_weight";
     public static final String COLUMN_PURCHASE_SELL = "purchase_sell";
@@ -43,10 +49,11 @@ public class MyDataBaseHelper extends SQLiteOpenHelper {
     private static final String SQL_CREATE_MY_BASKET_TABLE =
             "CREATE TABLE " + TABLE_MY_BASKET + " (" +
                     COLUMN_PRODUCT_NAME + " TEXT, " +
+                    COLUMN_PRODUCT_CATEGORY + " TEXT, " +
                     COLUMN_PRODUCT_PRICE + " REAL, " +
                     COLUMN_PRODUCT_WEIGHT + " REAL, " +
                     COLUMN_PRODUCT_SELL + " REAL, " +
-                    COLUMN_PRODUCT_PICTURE + " TEXT, " +
+                    COLUMN_PRODUCT_PICTURE + " INTEGER, " +
                     COLUMN_PRODUCT_COUNTRY + " TEXT)";
 
     private static final String SQL_CREATE_USER_ACCOUNT_TABLE =
@@ -58,10 +65,11 @@ public class MyDataBaseHelper extends SQLiteOpenHelper {
     private static final String SQL_CREATE_MY_PURCHASES_TABLE =
             "CREATE TABLE " + TABLE_MY_PURCHASES + " (" +
                     COLUMN_PURCHASE_NAME + " TEXT, " +
+                    COLUMN_PURCHASE_CATEGORY + " TEXT, " +
                     COLUMN_PURCHASE_PRICE + " REAL, " +
                     COLUMN_PURCHASE_WEIGHT + " REAL, " +
                     COLUMN_PURCHASE_SELL + " REAL, " +
-                    COLUMN_PURCHASE_PICTURE + " TEXT, " +
+                    COLUMN_PURCHASE_PICTURE + " INTEGER, " +
                     COLUMN_PURCHASE_COUNTRY + " TEXT, " +
                     COLUMN_PURCHASE_DATE + " TEXT)";
 
@@ -83,42 +91,96 @@ public class MyDataBaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MY_PURCHASES);
         onCreate(db);
     }
-    boolean isProductInBasket(String productName) {
+
+    // Проверка, есть ли продукт в корзине
+    public boolean isProductInBasket(String productName) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = null;
         boolean isProductExists = false;
         try {
-            // Выполнение запроса к базе данных для поиска продукта по имени
             cursor = db.query(TABLE_MY_BASKET, null, "product_name = ?", new String[]{productName}, null, null, null);
-
-            // Проверка наличия результатов запроса
             if (cursor != null && cursor.moveToFirst()) {
-                isProductExists = true; // Если результаты запроса найдены, устанавливаем флаг в true
+                isProductExists = true;
             }
         } finally {
-            // Закрытие курсора и соединения с базой данных
             if (cursor != null) {
                 cursor.close();
             }
             db.close();
         }
-        return isProductExists; // Возврат результата проверки
+        return isProductExists;
     }
-    void addProductToBasket(Product product, double weight, double sell){
+
+    // Обновление продукта в корзине
+    public void updateProductInBasket(String productName, double newWeight, double newSell) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
-        // Заполнение ContentValues данными о продукте
+        cv.put("product_weight", newWeight);
+        cv.put("product_sell", newSell);
+        try {
+            db.update(TABLE_MY_BASKET, cv, "product_name = ?", new String[]{productName});
+        } finally {
+            db.close();
+        }
+    }
+
+    // Добавление продукта в корзину
+    public void addProductToBasket(Product product, double weight, double sell) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
         cv.put("product_name", product.getName());
+        cv.put("product_category", product.getCategory());
         cv.put("product_price", product.getPrice());
         cv.put("product_weight", weight);
         cv.put("product_sell", sell);
-        cv.put("product_picture", String.valueOf(product.getPictureResource()));
+        cv.put("product_picture", product.getPictureResource());
         cv.put("product_country", product.getCountry());
-
-        // Вставка данных в таблицу my_basket
         db.insert(TABLE_MY_BASKET, null, cv);
-
-        // Закрытие соединения с базой данных
         db.close();
+    }
+
+    // Удаление продукта из корзины
+    public void deleteProductFromBasket(String productName) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        try {
+            db.delete(TABLE_MY_BASKET, "product_name = ?", new String[]{productName});
+        } finally {
+            db.close();
+        }
+    }
+    Cursor readAllData(String TABLE_NAME){
+        String query="SELECT * FROM " + TABLE_NAME;
+        SQLiteDatabase db= this.getReadableDatabase();
+        Cursor cursor=null;
+        if (db!=null){
+            cursor=db.rawQuery(query, null);
+        }
+        return cursor;
+    }
+    public List<Purchase> getAllPurchases() {
+        List<Purchase> purchaseList = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_MY_BASKET, null);
+
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                String name = cursor.getString(0);
+                String category = cursor.getString(1);
+                String country = cursor.getString(6);
+                int price = cursor.getInt(2);
+                int pictureResource = cursor.getInt(5);
+                double weight = cursor.getDouble(3);
+                double sell = cursor.getDouble(4);
+                Purchase purchase = new Purchase(name, category, country, price, pictureResource, weight, sell);
+                purchaseList.add(purchase);
+            } while (cursor.moveToNext());
+        }
+
+        if (cursor != null) {
+            cursor.close();
+        }
+        db.close();
+
+        return purchaseList;
     }
 }
