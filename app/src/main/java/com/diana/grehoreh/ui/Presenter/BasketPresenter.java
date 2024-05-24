@@ -16,6 +16,9 @@ public class BasketPresenter {
         this.context = context;
         this.myDB = new MyDataBaseHelper(context);
     }
+    public boolean EmptyBasket(){
+        return myDB.isMyBasketEmpty();
+    }
 
     public void loadBasket() {
         List<Purchase> purchases = myDB.getAllPurchases();

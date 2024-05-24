@@ -18,6 +18,7 @@ public class PaymentActivity extends AppCompatActivity implements PaymentContrac
 
     private TextView totalPriceView;
     private TextView pointsTextView;
+    private TextView moneyView;
     private Switch bonusSwitch;
     private RadioGroup paymentRadioGroup;
     private RadioButton cardRadioButton;
@@ -34,13 +35,16 @@ public class PaymentActivity extends AppCompatActivity implements PaymentContrac
         totalPriceView = findViewById(R.id.totalPriceView);
         pointsTextView = findViewById(R.id.pointsTextView);
         bonusSwitch = findViewById(R.id.bonusSwitch);
+        moneyView=findViewById(R.id.moneyView);
         paymentRadioGroup = findViewById(R.id.paymentRadioGroup);
         cardRadioButton = findViewById(R.id.cardRadioButton);
         cashRadioButton = findViewById(R.id.cashRadioButton);
         payButton = findViewById(R.id.payButton);
         // Initialize presenter
         presenter = new PaymentPresenter(this, getApplicationContext());
+        pointsTextView.setText("Списать "+presenter.Bonus()+" баллов");
         totalPriceView.setText(presenter.TotalPriceView());
+        moneyView.setText(presenter.Card()+" руб");
         // Set listeners
         payButton.setOnClickListener(view -> {
             if (presenter.onPayButtonClick()){
@@ -49,7 +53,18 @@ public class PaymentActivity extends AppCompatActivity implements PaymentContrac
                 finish(); // Завершение активити
             }
         });
-
+        paymentRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                if (checkedId == R.id.cardRadioButton) {
+                    // Если выбрана карта, обновляем текст на moneyView для карты
+                    moneyView.setText(presenter.Card()+" руб");
+                } else if (checkedId == R.id.cashRadioButton) {
+                    // Если выбрана наличность, обновляем текст на moneyView для наличных
+                    moneyView.setText(presenter.Cash()+" руб");
+                }
+            }
+        });
     }
     @Override
     public boolean isBonusChecked() {

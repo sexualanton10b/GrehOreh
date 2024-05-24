@@ -13,6 +13,7 @@ import com.diana.grehoreh.ui.Model.UserAccount;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -175,6 +176,23 @@ public class MyDataBaseHelper extends SQLiteOpenHelper {
         }
         return cursor;
     }
+    public boolean isMyBasketEmpty() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_MY_BASKET, null);
+        int count = 0;
+
+        if (cursor != null && cursor.moveToFirst()) {
+            count = cursor.getInt(0);
+        }
+
+        if (cursor != null) {
+            cursor.close();
+        }
+
+        db.close();
+
+        return count == 0;
+    }
     public List<Purchase> getAllPurchases() {
         List<Purchase> purchaseList = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
@@ -200,7 +218,6 @@ public class MyDataBaseHelper extends SQLiteOpenHelper {
         db.close();
         return purchaseList;
     }
-    // Чтение таблицы user_account и создание объекта UserAccount
     // Чтение таблицы user_account и создание объекта UserAccount
     public UserAccount getUserAccount() {
         SQLiteDatabase db = this.getReadableDatabase();
@@ -232,7 +249,7 @@ public class MyDataBaseHelper extends SQLiteOpenHelper {
         db.close();
         return rowsAffected > 0;
     }
-    public void savePurchasesToMyPurchases(Basket basket) {
+    public void savePurchasesToMyPurchases(Basket basket) { //
         SQLiteDatabase db = this.getWritableDatabase();
         String currentDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
 
@@ -254,7 +271,9 @@ public class MyDataBaseHelper extends SQLiteOpenHelper {
     public Basket getBasket() {
         List<Purchase> purchaseList = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_MY_PURCHASES, null);
+
+        // Query to get all rows in descending order by the primary key
+        Cursor cursor = db.query(TABLE_MY_PURCHASES, null, null, null, null, null, COLUMN_PURCHASE_DATE + " DESC");
 
         if (cursor != null && cursor.moveToFirst()) {
             do {
@@ -266,7 +285,6 @@ public class MyDataBaseHelper extends SQLiteOpenHelper {
                 int picture = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_PURCHASE_PICTURE));
                 String country = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PURCHASE_COUNTRY));
                 String date = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PURCHASE_DATE));
-
                 Purchase purchase = new Purchase(name, category, country, price, picture, weight, sell, date);
                 purchaseList.add(purchase);
             } while (cursor.moveToNext());
@@ -276,6 +294,13 @@ public class MyDataBaseHelper extends SQLiteOpenHelper {
             cursor.close();
         }
         db.close();
+        Collections.reverse(purchaseList);
         return (new Basket(purchaseList));
     }
+    public void clearHistory() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_MY_PURCHASES, null, null);
+        db.close();
+    }
+
 }

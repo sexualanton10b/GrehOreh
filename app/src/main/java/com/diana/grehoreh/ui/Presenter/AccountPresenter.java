@@ -21,6 +21,9 @@ public class AccountPresenter implements AccountContract.Presenter {
             view.showUserData(userAccount);
         }
     }
+    public void clearHistory(){
+        myDB.clearHistory();
+    }
 
     @Override
     public void updateUserData(int debetCard, int cash, int bonusCard) {

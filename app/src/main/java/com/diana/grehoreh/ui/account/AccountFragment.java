@@ -15,7 +15,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.diana.grehoreh.R;
-import com.diana.grehoreh.databinding.FragmentBasketBinding;
 import com.diana.grehoreh.ui.Model.UserAccount;
 import com.diana.grehoreh.ui.Presenter.AccountAdapter;
 import com.diana.grehoreh.ui.Presenter.AccountPresenter;
@@ -38,6 +37,7 @@ public class AccountFragment extends Fragment implements AccountContract.View {
         cashEditText = view.findViewById(R.id.cash);
         bonusCardEditText = view.findViewById(R.id.bonus_card);
         Button updateButton = view.findViewById(R.id.update_button);
+        Button clearButton=view.findViewById(R.id.clear_button);
         MyDataBaseHelper myDB = new MyDataBaseHelper(getContext());
         presenter = new AccountPresenter(this, myDB);
         // Initialize RecyclerView and set up adapter
@@ -59,6 +59,12 @@ public class AccountFragment extends Fragment implements AccountContract.View {
                 } catch (NumberFormatException e) {
                     Toast.makeText(getContext(), "Пожалуйста, введите корректные данные", Toast.LENGTH_SHORT).show();
                 }
+            }
+        });
+        clearButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                presenter.clearHistory();
             }
         });
 

@@ -13,5 +13,7 @@ public interface AccountContract {
     interface Presenter {
         void loadUserData();
         void updateUserData(int debetCard, int cash, int bonusCard);
+
+        void clearHistory();
     }
 }

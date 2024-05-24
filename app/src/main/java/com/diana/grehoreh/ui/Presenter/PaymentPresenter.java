@@ -58,6 +58,9 @@ public class PaymentPresenter implements PaymentContract.Presenter {
             return false;
         }
     }
+    public int Bonus(){ return ua.getBonusCard();}
+    public int Card(){ return ua.getDebetCard();}
+    public int Cash(){ return ua.getCash();}
     public String TotalPriceView(){
         return String.format("%.2f руб", basket.getTotalCost());
     }

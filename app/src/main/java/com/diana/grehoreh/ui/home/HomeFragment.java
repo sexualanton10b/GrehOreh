@@ -11,18 +11,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.diana.grehoreh.R;
-import com.diana.grehoreh.databinding.FragmentHomeBinding;
 import com.diana.grehoreh.ui.Presenter.ReadProducts;
 
 public class HomeFragment extends Fragment {
 
-    private FragmentHomeBinding binding;
-
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-
-        binding = FragmentHomeBinding.inflate(inflater, container, false);
-        View root = binding.getRoot();
+        View root = inflater.inflate(R.layout.fragment_home, container, false);
 
         // Находим RecyclerView в макете и настраиваем его
         RecyclerView recyclerView = root.findViewById(R.id.list);
@@ -33,11 +28,5 @@ public class HomeFragment extends Fragment {
         recyclerView.setAdapter(ReadProducts.CreateAdapter(requireContext()));
 
         return root;
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
     }
 }
