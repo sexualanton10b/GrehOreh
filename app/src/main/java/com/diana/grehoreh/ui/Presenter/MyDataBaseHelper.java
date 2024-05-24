@@ -6,8 +6,10 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.diana.grehoreh.ui.Model.Basket;
 import com.diana.grehoreh.ui.Model.Product;
 import com.diana.grehoreh.ui.Model.Purchase;
+import com.diana.grehoreh.ui.Model.UserAccount;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,9 +32,9 @@ public class MyDataBaseHelper extends SQLiteOpenHelper {
 
     // Таблица user_account
     public static final String TABLE_USER_ACCOUNT = "user_account";
-    public static final String COLUMN_USER_NAME = "user_name";
-    public static final String COLUMN_USER_BONUS = "user_bonus";
-    public static final String COLUMN_USER_ADDRESS = "user_address";
+    public static final String COLUMN_USER_DEBET_CARD = "debet_card";  // New column
+    public static final String COLUMN_USER_CASH = "cash";              // New column
+    public static final String COLUMN_USER_BONUS_CARD = "bonus_card";  // New column
 
     // Таблица my_purchases
     public static final String TABLE_MY_PURCHASES = "my_purchases";
@@ -58,9 +60,9 @@ public class MyDataBaseHelper extends SQLiteOpenHelper {
 
     private static final String SQL_CREATE_USER_ACCOUNT_TABLE =
             "CREATE TABLE " + TABLE_USER_ACCOUNT + " (" +
-                    COLUMN_USER_NAME + " TEXT, " +
-                    COLUMN_USER_BONUS + " INTEGER, " +
-                    COLUMN_USER_ADDRESS + " TEXT)";
+                    COLUMN_USER_DEBET_CARD + " INTEGER, " +
+                    COLUMN_USER_CASH + " INTEGER, " +
+                    COLUMN_USER_BONUS_CARD + " INTEGER)";
 
     private static final String SQL_CREATE_MY_PURCHASES_TABLE =
             "CREATE TABLE " + TABLE_MY_PURCHASES + " (" +
@@ -80,8 +82,15 @@ public class MyDataBaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(SQL_CREATE_MY_BASKET_TABLE);
-        db.execSQL(SQL_CREATE_USER_ACCOUNT_TABLE);
         db.execSQL(SQL_CREATE_MY_PURCHASES_TABLE);
+        // Создание таблицы User_Account с начальными значениями
+        db.execSQL(SQL_CREATE_USER_ACCOUNT_TABLE);
+        // Вставка начальных значений в таблицу User_Account
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(COLUMN_USER_DEBET_CARD, 0);
+        contentValues.put(COLUMN_USER_CASH, 0);
+        contentValues.put(COLUMN_USER_BONUS_CARD, 0);
+        db.insert(TABLE_USER_ACCOUNT, null, contentValues);
     }
 
     @Override
@@ -180,7 +189,38 @@ public class MyDataBaseHelper extends SQLiteOpenHelper {
             cursor.close();
         }
         db.close();
-
         return purchaseList;
+    }
+    // Чтение таблицы user_account и создание объекта UserAccount
+    // Чтение таблицы user_account и создание объекта UserAccount
+    public UserAccount getUserAccount() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(TABLE_USER_ACCOUNT, null, null, null, null, null, null);
+        UserAccount userAccount = null;
+
+        if (cursor != null && cursor.moveToFirst()) {
+            int debetCard = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_USER_DEBET_CARD));
+            int cash = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_USER_CASH));
+            int bonusCard = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_USER_BONUS_CARD));
+            userAccount = new UserAccount(debetCard, cash, bonusCard);
+        }
+
+        if (cursor != null) {
+            cursor.close();
+        }
+        db.close();
+        return userAccount;
+    }
+    // Метод для обновления данных в таблице user_account
+    public boolean updateUserAccount(UserAccount userAccount) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(COLUMN_USER_DEBET_CARD, userAccount.getDebetCard());
+        contentValues.put(COLUMN_USER_CASH, userAccount.getCash());
+        contentValues.put(COLUMN_USER_BONUS_CARD, userAccount.getBonusCard());
+
+        int rowsAffected = db.update(TABLE_USER_ACCOUNT, contentValues, null, null);
+        db.close();
+        return rowsAffected > 0;
     }
 }

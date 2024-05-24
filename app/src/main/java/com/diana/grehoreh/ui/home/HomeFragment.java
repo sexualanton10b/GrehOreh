@@ -4,11 +4,9 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -30,9 +28,10 @@ public class HomeFragment extends Fragment {
         RecyclerView recyclerView = root.findViewById(R.id.list);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
 
-        // Создаем адаптер, используя метод CreateAdapter из класса ReadProducts
+        // Создаем адаптер с помощью метода CreateAdapter из класса ReadProducts
         // и устанавливаем его для RecyclerView
         recyclerView.setAdapter(ReadProducts.CreateAdapter(requireContext()));
+
         return root;
     }
 
