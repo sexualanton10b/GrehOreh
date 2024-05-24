@@ -40,7 +40,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
         Product product = products.get(position);
         holder.pictureView.setImageResource(product.getPictureResource());
         holder.nameView.setText(product.getName());
-        holder.priceView.setText(String.valueOf(product.getPrice()));
+        holder.priceView.setText(String.valueOf(product.getPrice())+" руб/кг");
         holder.listLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

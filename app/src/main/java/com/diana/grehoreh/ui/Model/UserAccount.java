@@ -30,6 +30,7 @@ public class UserAccount {
     public int getBonusCard() {
         return bonus_card;
     }
+    public void addBonus(int bonus){ bonus_card=bonus_card+bonus;}
 
     public void setBonusCard(int bonus_card) {
         this.bonus_card = bonus_card;

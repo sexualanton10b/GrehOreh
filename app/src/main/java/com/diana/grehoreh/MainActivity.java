@@ -17,7 +17,7 @@ import com.diana.grehoreh.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
-    private static final int REQUEST_CODE_EDIT_ACTIVITY = 123;
+    private static final int REQUEST_CODE_ACTIVITY = 123;
     private NavController navController;
 
     @Override
@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_CODE_EDIT_ACTIVITY && resultCode == Activity.RESULT_OK) {
+        if (requestCode == REQUEST_CODE_ACTIVITY && resultCode == Activity.RESULT_OK) {
             Intent intent = new Intent(this, MainActivity.class);
             intent.putExtra("open_basket_fragment", true);
             finish();

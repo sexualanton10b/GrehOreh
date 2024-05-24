@@ -26,7 +26,7 @@ public class BasketAdapter extends RecyclerView.Adapter<BasketAdapter.ViewHolder
     private List<Purchase> purchases;
     private final Basket basket;
     private final LayoutInflater inflater;
-    private static final int REQUEST_CODE_EDIT_ACTIVITY = 123;
+    private static final int REQUEST_CODE_ACTIVITY = 123;
     private final MyDataBaseHelper myDB;
 
     public BasketAdapter(Context context) {
@@ -78,7 +78,7 @@ public class BasketAdapter extends RecyclerView.Adapter<BasketAdapter.ViewHolder
         holder.basketLayout.setOnClickListener(v -> {
             Intent intent = new Intent(context, EditActivity.class);
             intent.putExtra("purchase", purchase);
-            ((Activity) context).startActivityForResult(intent, REQUEST_CODE_EDIT_ACTIVITY);
+            ((Activity) context).startActivityForResult(intent, REQUEST_CODE_ACTIVITY);
         });
     }
 

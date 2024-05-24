@@ -25,6 +25,8 @@
 
         <activity android:name=".AddActivity" />
         <activity android:name=".EditActivity" />
+        <activity android:name=".PaymentActivity"
+            android:label="Оплата"/>
     </application>
 
 </manifest>

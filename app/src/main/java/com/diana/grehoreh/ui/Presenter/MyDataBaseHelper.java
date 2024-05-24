@@ -11,8 +11,11 @@ import com.diana.grehoreh.ui.Model.Product;
 import com.diana.grehoreh.ui.Model.Purchase;
 import com.diana.grehoreh.ui.Model.UserAccount;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class MyDataBaseHelper extends SQLiteOpenHelper {
     // Имя базы данных
@@ -157,6 +160,12 @@ public class MyDataBaseHelper extends SQLiteOpenHelper {
             db.close();
         }
     }
+    // Метод для очистки таблицы my_basket
+    public void clearBasket() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_MY_BASKET, null, null);
+        db.close();
+    }
     Cursor readAllData(String TABLE_NAME){
         String query="SELECT * FROM " + TABLE_NAME;
         SQLiteDatabase db= this.getReadableDatabase();
@@ -222,5 +231,51 @@ public class MyDataBaseHelper extends SQLiteOpenHelper {
         int rowsAffected = db.update(TABLE_USER_ACCOUNT, contentValues, null, null);
         db.close();
         return rowsAffected > 0;
+    }
+    public void savePurchasesToMyPurchases(Basket basket) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String currentDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+
+        for (Purchase purchase : basket.purchases) {
+            ContentValues cv = new ContentValues();
+            cv.put(COLUMN_PURCHASE_NAME, purchase.getName());
+            cv.put(COLUMN_PURCHASE_CATEGORY, purchase.getCategory());
+            cv.put(COLUMN_PURCHASE_PRICE, purchase.getPrice());
+            cv.put(COLUMN_PURCHASE_WEIGHT, purchase.getWeight());
+            cv.put(COLUMN_PURCHASE_SELL, purchase.getSell());
+            cv.put(COLUMN_PURCHASE_PICTURE, purchase.getPictureResource());
+            cv.put(COLUMN_PURCHASE_COUNTRY, purchase.getCountry());
+            cv.put(COLUMN_PURCHASE_DATE, currentDate);
+
+            db.insert(TABLE_MY_PURCHASES, null, cv);
+        }
+        db.close();
+    }
+    public Basket getBasket() {
+        List<Purchase> purchaseList = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_MY_PURCHASES, null);
+
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                String name = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PURCHASE_NAME));
+                String category = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PURCHASE_CATEGORY));
+                int price = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_PURCHASE_PRICE));
+                double weight = cursor.getDouble(cursor.getColumnIndexOrThrow(COLUMN_PURCHASE_WEIGHT));
+                double sell = cursor.getDouble(cursor.getColumnIndexOrThrow(COLUMN_PURCHASE_SELL));
+                int picture = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_PURCHASE_PICTURE));
+                String country = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PURCHASE_COUNTRY));
+                String date = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PURCHASE_DATE));
+
+                Purchase purchase = new Purchase(name, category, country, price, picture, weight, sell, date);
+                purchaseList.add(purchase);
+            } while (cursor.moveToNext());
+        }
+
+        if (cursor != null) {
+            cursor.close();
+        }
+        db.close();
+        return (new Basket(purchaseList));
     }
 }
