@@ -16,9 +16,11 @@ import com.diana.grehoreh.R;
 import com.diana.grehoreh.ui.Model.Basket;
 import com.diana.grehoreh.ui.Model.Purchase;
 
+import java.util.List;
+
 public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHolder>{
     private final Context context;
-    private final Basket basket;
+    private Basket basket;
     private final LayoutInflater inflater;
     private final MyDataBaseHelper myDB;
     public AccountAdapter(Context context) {
@@ -47,6 +49,10 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
     @Override
     public int getItemCount() {
         return basket.purchases.size();
+    }
+    public void updateData() {
+            this.basket = myDB.getBasket();
+            notifyDataSetChanged();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

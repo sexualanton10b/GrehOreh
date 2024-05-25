@@ -6,6 +6,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 import com.diana.grehoreh.ui.Model.Product;
 import com.diana.grehoreh.ui.Presenter.AddPresenter;
@@ -62,6 +64,7 @@ public class AddActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 presenter.addToBasket(weight, weight*product.getPrice(), AddActivity.this);
+                Toast.makeText(AddActivity.this, "Товар добавлен", Toast.LENGTH_SHORT).show();
             }
         });
     }

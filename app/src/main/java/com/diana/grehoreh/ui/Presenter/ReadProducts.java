@@ -26,16 +26,14 @@ public class ReadProducts {
                     String category = parts[1];
                     String country = parts[2];
                     int price = Integer.parseInt(parts[3]);
-                    int flagResource = getResourceId(context, parts[4]);
-
-                    Product product = new Product(name, category, country, price, flagResource);
+                    int pictureResource = getResourceId(context, parts[4]);
+                    Product product = new Product(name, category, country, price, pictureResource);
                     products.add(product);
                 }
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         return products;
     }
 

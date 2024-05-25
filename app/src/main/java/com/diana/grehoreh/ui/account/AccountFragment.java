@@ -65,6 +65,7 @@ public class AccountFragment extends Fragment implements AccountContract.View {
             @Override
             public void onClick(View v) {
                 presenter.clearHistory();
+                accountAdapter.updateData();
             }
         });
 

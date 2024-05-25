@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.diana.grehoreh.AddActivity;
 import com.diana.grehoreh.ui.Model.Product;
